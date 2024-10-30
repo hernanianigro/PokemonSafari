@@ -4,7 +4,7 @@ import personaje.*
 
 object nivel1 {
 	method cargar() {
-    	game.boardGround("fondoSafari.png")
+    	game.boardGround("safari.png")
 		//PAREDES
 		const ancho = game.width() - 1
 		const largo = game.height() - 1
@@ -80,18 +80,30 @@ object nivel1 {
         //personaje
 		game.addVisual(personaje)
         game.addVisual(enfermeraJoy)
-        game.addVisual(enfermeraJoy1)
-        game.addVisual(enfermeraJoy2)
-        game.addVisual(enfermeraJoy3)
-        game.addVisual(enfermeraJoy4)
-        game.addVisual(enfermeraJoy5)
-        game.addVisual(enfermeraJoy6)
-        game.addVisual(enfermeraJoy7)
+        game.addVisual(venusaur)
+        game.addVisual(pidgeot)
+        game.addVisual(arcanine)
+        game.addVisual(rhyhorn)
+        game.addVisual(lapras)
+        game.addVisual(chinchou)
+        game.addVisual(yanma)
+        game.addVisual(lairon)
+        game.addVisual(sharpedo)
+        game.addVisual(trapinch)
+        game.addVisual(tropius)
+        game.addVisual(regirock)
+        game.addVisual(bastiodon)
+        game.addVisual(tangrowth)
+        game.addVisual(kyurem)
         //TECLADO
-		keyboard.up().onPressDo({ personaje.irArriba() })({squish.play()})
-		keyboard.down().onPressDo({ personaje.irAbajo() })({squish.play()})
-		keyboard.left().onPressDo({ personaje.irIzquierda() })({squish.play()})
-		keyboard.right().onPressDo({ personaje.irDerecha() })({squish.play()})
+		keyboard.up().onPressDo{if (game.height()-4 > personaje.position().y()) personaje.irArriba()}
+        keyboard.down().onPressDo{if (game.height()-29 < personaje.position().y()) personaje.irAbajo()}
+        keyboard.left().onPressDo{if (game.width()-36 < personaje.position().x()) personaje.irIzquierda()}
+        keyboard.right().onPressDo{if (game.width()-2 > personaje.position().x()) personaje.irDerecha()}
+        //keyboard.up().onHoldDo({if (game.height()-1 > personaje.position().y()) personaje.irArriba() })
+		//keyboard.down().onHoldDo({if (game.height()-30 < personaje.position().y()) personaje.irAbajo() })
+		//keyboard.left().onHoldDo({if (game.width()-40 < personaje.position().x()) personaje.irIzquierda() })
+		//keyboard.right().onHoldDo({if (game.width()-1 > personaje.position().x()) personaje.irDerecha() })
 		//COLISIONES.onPressDo({ self.comprobarSiGano(cajas) })
 		game.whenCollideDo(personaje, { elemento => personaje.empuja(elemento) })
 	}
@@ -102,5 +114,58 @@ object nivel1 {
 	method dibujar(dibujo) {
 		game.addVisual(dibujo)
 		return dibujo
+	}
+}
+
+object juego {
+	var juegoIniciado = false
+	method empezar(){
+		game.sound("opening.mp3")
+		if (not juegoIniciado){
+			game.removeVisual(pantallaDeInicio)
+			juegoIniciado = true
+			pantallaDeInicio.terminarAnimacion()
+		}
+	}
+}
+
+object pantallaDeInicio{
+	var imagen = false
+	method iniciarAnimacion(){game.onTick(250,"Animacion del menu",{self.cambiar()})}
+	method terminarAnimacion(){game.removeTickEvent("Animacion del menu")}
+	method cambiar(){
+		if(imagen)
+			imagen = false
+		else
+			imagen = true
+	}
+	method image() {
+		if(imagen)
+			return "title1.png"
+		else
+			return "title2.png"
+	}
+}
+
+object nivel{
+	var property posProhibidas = []
+	var property posOcupadas = []
+	method agregar(pos){posOcupadas.add(pos)}
+	method remover(pos){posOcupadas.remove(pos)}
+	method posicionOcupada(pos){return posProhibidas.contains(pos) or posOcupadas.contains(pos)}
+	method posicionQuePuedeSerAfectadaPorUnaBomba(pos){return posOcupadas.contains(pos) or pos == personaje.position()}
+	method esUnaPared(pos){return posProhibidas.contains(pos)}
+	method agregarPosiciones(){
+		5.times{i=>
+			5.times{j=>
+				posProhibidas.add(game.at(i*2,j*2))
+			}
+		}
+		11.times{k=>
+			posProhibidas.add(game.at(k,0))
+			posProhibidas.add(game.at(k,12))
+			posProhibidas.add(game.at(0,k))
+			posProhibidas.add(game.at(12,k))			
+		}
 	}
 }

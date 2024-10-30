@@ -6,10 +6,12 @@ program PokeSafari {
 	game.title("Pokemon Safari")
 	game.height(30)
 	game.width(40)
-	game.boardGround("fondoSafari.png")
 	nivel1.cargar()
 	const musica = game.sound("mainBMG.WAV")
     musica.shouldLoop(true)
     game.schedule(500, {musica.play()} )
+	game.addVisual(pantallaDeInicio)
+	pantallaDeInicio.iniciarAnimacion()
+	keyboard.enter().onPressDo({juego.empezar()})
 	game.start()
 }

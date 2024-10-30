@@ -13,6 +13,8 @@ object personaje {
 	var property position = game.at(7, 2)
 	method image ()= "" + direccion.image()
 	var property direccion = arriba
+	var property ocupado = false
+	var property pokemonTeam = []
 	method empuja(unElemento) {
 		try
 			unElemento.movete(direccion)
@@ -49,6 +51,13 @@ object personaje {
 	}
 	method setDireccion(unaDireccion) {
 		direccion = unaDireccion
+	}
+	method agregarPokemon(poke){
+		poke.statsBase()
+		pokemonTeam.add(poke)
+	}
+	method pokemonVivos (){
+		return pokemonTeam.filter({pokemon=>pokemon.estaVivo()})
 	}
 }
 
@@ -113,13 +122,20 @@ class Cascada {
 class Pared {
 	var property position
 	method movete(direccion) {
-		throw new DomainException(message = "No puedes mover las paredes.", source = personaje)
+		throw new DomainException(message = "No puedo pasar por aqui.", source = personaje)
 	}
 	method puedePisarte(_) = false
 }
 
-object squish {
-  method play(){
-    game.sound("squish.WAV").play()
-  }
+object paredesMenu {
+	method generar(){
+		const ancho = game.width() 
+		const largo = game.height() 
+		const posParedes = []
+		(0 .. 9).forEach{ n => posParedes.add(new Position(x=n, y=0)) }
+		(0 .. 9).forEach{ n => posParedes.add(new Position(x=n, y=3)) }
+		(0 .. 2).forEach{ n => posParedes.add(new Position(x=-3, y=n)) }
+		(0 .. 2).forEach{ n => posParedes.add(new Position(x=9, y=n)) }
+		posParedes.forEach { p => game.addVisual(new Pared(position = p))}
+	}
 }
