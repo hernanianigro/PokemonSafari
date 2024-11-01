@@ -17,7 +17,12 @@ class Pokemon{
 	var property moveset = []
 	var property side="ally"
 	var property hpActual=1
-	method image () = name + ".gif"
+	method image () = if (side == "ally"){
+			return name + "3Dback.gif"
+		}else{
+			return name + "3D.gif"
+		}
+		//name + "3D.gif"
 	method position (){
 		if (side == "ally"){
 			return game.at(5,4)
@@ -90,6 +95,52 @@ class Pokemon{
 		hpActual=hp 
 	}
 }
+
+class Torterra inherits Pokemon{
+	method statsBase(){
+		name ="Torterra"
+		hp  =95
+		atk =109
+		def =105
+		spa =75
+		spd =85 
+		spe =56
+		types=[planta,suelo]
+		moveset = [hojasnavaja,terremoto,tumbaroca,cabezahierro]
+		self.stats()
+	}
+}
+
+class Blaziken inherits Pokemon{
+	method statsBase(){
+		name ="Blaziken"
+		hp  =80
+		atk =120
+		def =70
+		spa =110
+		spd =70 
+		spe =80
+		types=[fuego,lucha]
+		moveset = [cuchillada,lanzallamas,tajoaereo,esferaaural]
+		self.stats()
+	}
+}
+
+class Samurott inherits Pokemon{
+	method statsBase(){
+		name ="Samurott"
+		hp  =95
+		atk =100
+		def =85
+		spa =108
+		spd =70
+		spe =70
+		types=[agua,nulo]
+		moveset = [surf,megacuerno,acido,rayohielo]
+		self.stats()
+	}
+}
+
 class Venusaur inherits Pokemon{
 	method statsBase(){
 		name ="Venusaur"

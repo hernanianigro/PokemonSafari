@@ -135,7 +135,7 @@ object move4 inherits Move (
 object seleccionarSkill{
 	var property position = game.at(1,2)
 	var property direccion = izquierda
-	method image() = "selec.png"
+	method image() = "seleccion.png"
 	method irHorizontal(nuevaDireccion){
 			direccion = nuevaDireccion
 			self.moverse(4)

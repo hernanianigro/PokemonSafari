@@ -61,13 +61,30 @@ object npcArriba inherits NpcDireccion {
 
 object enfermeraJoy inherits Npc{
 	var property npcDireccion = npcAbajo
-	method position () = game.at(7,4)
+	method position () = game.at(5,5)
 	method image () = "Joy" + npcDireccion.image()
 	method interactuar(){
 		personaje.ocupado(true)
 		self.hablar("Bienvenido a la Zona Safari! Dejame recuperar tu salud.")
 		game.schedule(2000, {personaje.ocupado(false)})
 		personaje.pokemonTeam().forEach{pokemon=>pokemon.recuperarse()}
+	}
+}
+
+object profesorOak inherits Npc{
+	var property npcDireccion = npcAbajo
+	method image () = "Oak" + npcDireccion.image()
+	method position () = game.at(7,3)
+	method interactuar (){
+		personaje.ocupado(true)
+		self.hablar("Bienvenido! Aqui tienes 3 Pokemon para comenzar tu viaje.")
+		if(!cumplioProposito){
+			personaje.agregarPokemon(new Torterra(owner=personaje))
+			personaje.agregarPokemon(new Blaziken(owner=personaje))
+			personaje.agregarPokemon(new Samurott(owner=personaje))
+			cumplioProposito = true
+		}
+		game.schedule(2000,{personaje.ocupado(false)})
 	}
 }
 
@@ -95,6 +112,7 @@ object venusaur inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -123,6 +141,7 @@ object pidgeot inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -151,6 +170,7 @@ object arcanine inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -179,6 +199,7 @@ object rhyhorn inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -207,6 +228,7 @@ object lapras inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -235,6 +257,7 @@ object chinchou inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -263,6 +286,7 @@ object yanma inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -291,6 +315,7 @@ object lairon inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -319,6 +344,7 @@ object sharpedo inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -347,6 +373,7 @@ object trapinch inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -375,6 +402,7 @@ object tropius inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -399,10 +427,10 @@ object regirock inherits Npc{
 		}else{
 			self.hablar("Re re re gi gi ro...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Regirock(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -431,6 +459,7 @@ object bastiodon inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -459,6 +488,7 @@ object tangrowth inherits Npc{
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }
@@ -483,10 +513,10 @@ object kyurem inherits Npc{
 		}else{
 			self.hablar("Kyuuuu...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Kyurem(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
+			self.position() game.at(50,50)
 		}
 	}
 }

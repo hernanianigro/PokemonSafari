@@ -52,6 +52,9 @@ object personaje {
 	method setDireccion(unaDireccion) {
 		direccion = unaDireccion
 	}
+	method interactuar (){
+		game.getObjectsIn(direccion.avanzar(position,1)).forEach({npc=>if(!ocupado){npc.interactuar()}})
+	}
 	method agregarPokemon(poke){
 		poke.statsBase()
 		pokemonTeam.add(poke)
