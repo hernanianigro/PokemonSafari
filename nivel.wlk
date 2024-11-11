@@ -1,10 +1,20 @@
 import wollok.game.*
+import batalla.*
+import contadorDeVida.*
+import movimientos.*
 import npc.*
 import personaje.*
+import pokemon.*
+import tipo.*
 
 object nivel1 {
 	method cargar() {
-    	game.boardGround("safari.png")
+    	game.boardGround("fondoSafari.jpg")
+        game.addVisual(new ElementoInterfaz(image="fondoSafari.jpg", position = game.at(0,0)))
+        const musica = game.sound("Safari.mp3")
+        musica.shouldLoop(true)
+        game.schedule(500,{musica.play()})
+        const position = game.at(0,0)
 		//PAREDES
 		const ancho = game.width() - 1
 		const largo = game.height() - 1
@@ -57,7 +67,7 @@ object nivel1 {
         (21 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 2))})
         (23 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 3))})
         (23 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 4))})
-        (27 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 5))})
+        (35 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 5))})
         (27 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 6))})
         (27 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 7))})
         (27 .. 38).forEach({ n => posicionesAgua.add(new Position(x = n, y = 8))})
@@ -80,32 +90,34 @@ object nivel1 {
         //personaje
 		game.addVisual(personaje)
         game.addVisual(enfermeraJoy)
+        game.addVisual(profesorOak)
         game.addVisual(venusaur)
         game.addVisual(pidgeot)
-        game.addVisual(arcanine)
-        game.addVisual(rhyhorn)
+        game.addVisual(victini)
+        game.addVisual(zweilous)
         game.addVisual(lapras)
-        game.addVisual(chinchou)
-        game.addVisual(yanma)
+        game.addVisual(rotom)
+        game.addVisual(butterfree)
         game.addVisual(lairon)
-        game.addVisual(sharpedo)
-        game.addVisual(trapinch)
-        game.addVisual(tropius)
-        game.addVisual(regirock)
+        game.addVisual(wigglytuff)
+        game.addVisual(sandile)
+        game.addVisual(shedinja)
+        game.addVisual(toxicroak)
         game.addVisual(bastiodon)
-        game.addVisual(tangrowth)
+        game.addVisual(gardevoir)
         game.addVisual(kyurem)
         //TECLADO
-		keyboard.up().onPressDo{if (game.height()-4 > personaje.position().y()) personaje.irArriba()}
-        keyboard.down().onPressDo{if (game.height()-29 < personaje.position().y()) personaje.irAbajo()}
-        keyboard.left().onPressDo{if (game.width()-36 < personaje.position().x()) personaje.irIzquierda()}
-        keyboard.right().onPressDo{if (game.width()-2 > personaje.position().x()) personaje.irDerecha()}
+		keyboard.up().onPressDo{if (game.height()-4 > personaje.position().y()) personaje.ir(arriba)}
+        keyboard.down().onPressDo{if (game.height()-29 < personaje.position().y()) personaje.ir(abajo)}
+        keyboard.left().onPressDo{if (game.width()-36 < personaje.position().x()) personaje.ir(izquierda)}
+        keyboard.right().onPressDo{if (game.width()-2 > personaje.position().x()) personaje.ir(derecha)}
+        keyboard.z().onPressDo({personaje.interactuar()})
+        keyboard.enter().onPressDo({juego.empezar()})
         //keyboard.up().onHoldDo({if (game.height()-1 > personaje.position().y()) personaje.irArriba() })
 		//keyboard.down().onHoldDo({if (game.height()-30 < personaje.position().y()) personaje.irAbajo() })
 		//keyboard.left().onHoldDo({if (game.width()-40 < personaje.position().x()) personaje.irIzquierda() })
 		//keyboard.right().onHoldDo({if (game.width()-1 > personaje.position().x()) personaje.irDerecha() })
 		//COLISIONES.onPressDo({ self.comprobarSiGano(cajas) })
-		game.whenCollideDo(personaje, { elemento => personaje.empuja(elemento) })
 	}
 	method restart() {
 		game.clear()
@@ -115,12 +127,12 @@ object nivel1 {
 		game.addVisual(dibujo)
 		return dibujo
 	}
+
 }
 
 object juego {
 	var juegoIniciado = false
 	method empezar(){
-		game.sound("opening.mp3")
 		if (not juegoIniciado){
 			game.removeVisual(pantallaDeInicio)
 			juegoIniciado = true
@@ -130,7 +142,8 @@ object juego {
 }
 
 object pantallaDeInicio{
-	var imagen = false
+    var property position = game.at(0,0)
+    var imagen = false
 	method iniciarAnimacion(){game.onTick(250,"Animacion del menu",{self.cambiar()})}
 	method terminarAnimacion(){game.removeTickEvent("Animacion del menu")}
 	method cambiar(){
@@ -141,31 +154,8 @@ object pantallaDeInicio{
 	}
 	method image() {
 		if(imagen)
-			return "title1.png"
+			return "title1.jpg"
 		else
-			return "title2.png"
-	}
-}
-
-object nivel{
-	var property posProhibidas = []
-	var property posOcupadas = []
-	method agregar(pos){posOcupadas.add(pos)}
-	method remover(pos){posOcupadas.remove(pos)}
-	method posicionOcupada(pos){return posProhibidas.contains(pos) or posOcupadas.contains(pos)}
-	method posicionQuePuedeSerAfectadaPorUnaBomba(pos){return posOcupadas.contains(pos) or pos == personaje.position()}
-	method esUnaPared(pos){return posProhibidas.contains(pos)}
-	method agregarPosiciones(){
-		5.times{i=>
-			5.times{j=>
-				posProhibidas.add(game.at(i*2,j*2))
-			}
-		}
-		11.times{k=>
-			posProhibidas.add(game.at(k,0))
-			posProhibidas.add(game.at(k,12))
-			posProhibidas.add(game.at(0,k))
-			posProhibidas.add(game.at(12,k))			
-		}
+			return "title2.jpg"
 	}
 }

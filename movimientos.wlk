@@ -1,6 +1,10 @@
-import pokemon.*
-import personaje.*
+import wollok.game.*
 import batalla.*
+import contadorDeVida.*
+import nivel.*
+import npc.*
+import personaje.*
+import pokemon.*
 import tipo.*
 
 object ataqueFisico {
@@ -22,8 +26,18 @@ class Ataque{
 	var property effect
 	var property accuracy
 	var property priority
-	method image () = name + ".png"
+	method image () = "ATAQUE " + name + ".png"
 }
+//ATAQUE VACIO PARA INICIALIZAR MOVE
+const ninguno =new Ataque(
+	name = "ninguno",
+	type = ataqueFisico,
+	damagetype = normal,
+	dmg = 0,
+	effect= "Ninguno",
+	accuracy = 100,
+	priority =false
+)
 //NORMAL
 const cuchillada =new Ataque(
 	name = "cuchillada",

@@ -1,11 +1,14 @@
 import wollok.game.*
-import personaje.*
-import nivel.*
-import pokemon.*
 import batalla.*
+import contadorDeVida.*
+import movimientos.*
+import nivel.*
+import personaje.*
+import pokemon.*
+import tipo.*
 
 class Npc{
-	var property direccion = abajo
+	var property direccion = npcAbajo
 	var property pokemonTeam = []
 	var property ocupado = false
 	var property cumplioProposito = false
@@ -23,49 +26,35 @@ class Npc{
 	}
 }
 
-class NpcDireccion {
-	method siguiente(position)
+object npcIzquierda {
+	method opuesta() = npcDerecha
+	method image() {return "Izquierda.png"}
+	method avanzar (position,cantidad) {return position.left(cantidad)}
 }
-
-object npcIzquierda inherits NpcDireccion { 
-	override method siguiente(position) = position.left(1) 
-	method opuesto() = derecha
-	method image() {
-		return "Izquierda.png"
-	}
+object npcDerecha {
+	method opuesta() = npcIzquierda
+	method image() {return "Derecha.png"}
+	method avanzar (position,cantidad) {return position.right(cantidad)}
 }
-
-object npcDerecha inherits NpcDireccion { 
-	override method siguiente(position) = position.right(1) 
-	method opuesto() = izquierda
-	method image() {
-		return "Derecha.png"
-	}
+object npcArriba {
+	method opuesta() = npcAbajo
+	method image() {return "Arriba.png"}
+	method avanzar (position,cantidad) {return position.up(cantidad)}
 }
-
-object npcAbajo inherits NpcDireccion { 
-	override method siguiente(position) = position.down(1) 
-	method opuesto() = arriba
-	method image() {
-		return "Abajo.png"
-	}
-}
-
-object npcArriba inherits NpcDireccion { 
-	override method siguiente(position) = position.up(1) 
-	method opuesto() = abajo
-	method image() {
-		return "Arriba.png"
-	}
+object npcAbajo {
+	method opuesta() = npcArriba
+	method image() {return "Abajo.png"}
+	method avanzar (position,cantidad) {return position.down(cantidad)}
 }
 
 object enfermeraJoy inherits Npc{
 	var property npcDireccion = npcAbajo
-	method position () = game.at(5,5)
+	method position () = game.at(5,6)
 	method image () = "Joy" + npcDireccion.image()
 	method interactuar(){
 		personaje.ocupado(true)
 		self.hablar("Bienvenido a la Zona Safari! Dejame recuperar tu salud.")
+		game.sound("heal.mp3").play()
 		game.schedule(2000, {personaje.ocupado(false)})
 		personaje.pokemonTeam().forEach{pokemon=>pokemon.recuperarse()}
 	}
@@ -74,14 +63,15 @@ object enfermeraJoy inherits Npc{
 object profesorOak inherits Npc{
 	var property npcDireccion = npcAbajo
 	method image () = "Oak" + npcDireccion.image()
-	method position () = game.at(7,3)
+	method position () = game.at(7,4)
 	method interactuar (){
 		personaje.ocupado(true)
 		self.hablar("Bienvenido! Aqui tienes 3 Pokemon para comenzar tu viaje.")
+		game.sound("button.mp3").play()
 		if(!cumplioProposito){
 			personaje.agregarPokemon(new Torterra(owner=personaje))
 			personaje.agregarPokemon(new Blaziken(owner=personaje))
-			personaje.agregarPokemon(new Samurott(owner=personaje))
+			personaje.agregarPokemon(new Lanturn(owner=personaje))
 			cumplioProposito = true
 		}
 		game.schedule(2000,{personaje.ocupado(false)})
@@ -95,13 +85,13 @@ object venusaur inherits Npc{
 	method PokemonTeam(){
 		self.agregarPokemon(new Venusaur(side="enemy",owner=self))
 	}
-	method image () = "003venusaur.png"
+	method image () = "Venusaur.png"
 	method position () = game.at(35,12)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Saaaur!!!")
-			game.sound("003venusaur.mp3")
+			game.sound("Venusaur.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
@@ -124,13 +114,13 @@ object pidgeot inherits Npc{
 	method PokemonTeam(){
 		self.agregarPokemon(new Pidgeot(side="enemy",owner=self))
 	}
-	method image () = "018pidgeot.png"
-	method position () = game.at(23,13)
+	method image () = "Pidgeot.png"
+	method position () = game.at(36,23)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Pidgeoot!!!")
-			game.sound("018pidgeot.mp3")
+			game.sound("Pidgeot.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
@@ -146,27 +136,26 @@ object pidgeot inherits Npc{
 	}
 }
 
-object arcanine inherits Npc{
+object victini inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 50
 	method PokemonTeam(){
-		self.agregarPokemon(new Arcanine(side="enemy",owner=self))
+		self.agregarPokemon(new Victini(side="enemy",owner=self))
 	}
-	method image () = "059arcanine.png"
+	method image () = "Victini.png"
 	method position () = game.at(4,26)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
-			self.hablar("Roaaar!!!")
-			game.sound("059arcanine.mp3")
+			self.hablar("Victory!!!")
+			game.sound("Victini.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
-			self.hablar("Grrr...")
+			self.hablar("Viii...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Arcanine(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -175,27 +164,27 @@ object arcanine inherits Npc{
 	}
 }
 
-object rhyhorn inherits Npc{
+object zweilous inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 40
 	method PokemonTeam(){
-		self.agregarPokemon(new Rhyhorn(side="enemy",owner=self))
+		self.agregarPokemon(new Zweilous(side="enemy",owner=self))
 	}
-	method image () = "111rhyhorn.png"
-	method position () = game.at(6,19)
+	method image () = "Zweilous.png"
+	method position () = game.at(26,19)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
-			self.hablar("Hooorn!!!")
-			game.sound("111rhyhorn.mp3")
+			self.hablar("Owwww!!!")
+			game.sound("Zweilous.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
-			self.hablar("Rhy...")
+			self.hablar("Zzzz...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Rhyhorn(owner=personaje))
+				personaje.agregarPokemon(new Zweilous(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -211,13 +200,13 @@ object lapras inherits Npc{
 	method PokemonTeam(){
 		self.agregarPokemon(new Lapras(side="enemy",owner=self))
 	}
-	method image () = "131lapras.png"
-	method position () = game.at(36,3)
+	method image () = "Lapras.png"
+	method position () = game.at(34,5)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Laaaa!!!")
-			game.sound("131lapras.mp3")
+			game.sound("Lapras.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
@@ -233,27 +222,27 @@ object lapras inherits Npc{
 	}
 }
 
-object chinchou inherits Npc{
+object rotom inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 15
 	method PokemonTeam(){
-		self.agregarPokemon(new Chinchou(side="enemy",owner=self))
+		self.agregarPokemon(new Rotom(side="enemy",owner=self))
 	}
-	method image () = "170chinchou.png"
-	method position () = game.at(31,6)
+	method image () = "Rotom.png"
+	method position () = game.at(18,3)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Bzzzt!!!")
-			game.sound("170chinchou.mp3")
+			game.sound("Rotom.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
 			self.hablar("Bzzzt...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Chinchou(owner=personaje))
+				personaje.agregarPokemon(new Rotom(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -262,27 +251,27 @@ object chinchou inherits Npc{
 	}
 }
 
-object yanma inherits Npc{
+object butterfree inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 30
 	method PokemonTeam(){
-		self.agregarPokemon(new Yanma(side="enemy",owner=self))
+		self.agregarPokemon(new Butterfree(side="enemy",owner=self))
 	}
-	method image () = "193yanma.png"
-	method position () = game.at(15,22)
+	method image () = "Butterfree.png"
+	method position () = game.at(16,8)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
-			self.hablar("BzzzBzzz!!!")
-			game.sound("193yanma.mp3")
+			self.hablar("Freeeee!!!")
+			game.sound("Butterfree.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
-			self.hablar("Bzzz...")
+			self.hablar("Free...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Yanma(owner=personaje))
+				personaje.agregarPokemon(new Butterfree(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -298,13 +287,13 @@ object lairon inherits Npc{
 	method PokemonTeam(){
 		self.agregarPokemon(new Lairon(side="enemy",owner=self))
 	}
-	method image () = "305lairon.png"
-	method position () = game.at(9,20)
+	method image () = "Lairon.png"
+	method position () = game.at(6,19)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Laaaaai!!!")
-			game.sound("305lairon.mp3")
+			game.sound("Lairon.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
@@ -320,27 +309,27 @@ object lairon inherits Npc{
 	}
 }
 
-object sharpedo inherits Npc{
+object wigglytuff inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 40
 	method PokemonTeam(){
-		self.agregarPokemon(new Sharpedo(side="enemy",owner=self))
+		self.agregarPokemon(new Wigglytuff(side="enemy",owner=self))
 	}
-	method image () = "319sharpedo.png"
-	method position () = game.at(24,2)
+	method image () = "Wigglytuff.png"
+	method position () = game.at(9,10)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
-			self.hablar("Crunch!!!")
-			game.sound("319sharpedo.mp3")
+			self.hablar("Tuff!!!")
+			game.sound("Wigglytuff.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
-			self.hablar("Clac clac...")
+			self.hablar("Wiggly...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Sharpedo(owner=personaje))
+				personaje.agregarPokemon(new Wigglytuff(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -349,27 +338,27 @@ object sharpedo inherits Npc{
 	}
 }
 
-object trapinch inherits Npc{
+object sandile inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 25
 	method PokemonTeam(){
-		self.agregarPokemon(new Trapinch(side="enemy",owner=self))
+		self.agregarPokemon(new Sandile(side="enemy",owner=self))
 	}
-	method image () = "328trapinch.png"
-	method position () = game.at(8,9)
+	method image () = "Sandile.png"
+	method position () = game.at(24,6)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Chomp chomp!!!")
-			game.sound("328trapinch.mp3")
+			game.sound("Sandile.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
 			self.hablar("Chomp...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Trapinch(owner=personaje))
+				personaje.agregarPokemon(new Sandile(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -378,27 +367,27 @@ object trapinch inherits Npc{
 	}
 }
 
-object tropius inherits Npc{
+object shedinja inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 50
 	method PokemonTeam(){
-		self.agregarPokemon(new Tropius(side="enemy",owner=self))
+		self.agregarPokemon(new Shedinja(side="enemy",owner=self))
 	}
-	method image () = "357tropius.png"
-	method position () = game.at(17,8)
+	method image () = "Shedinja.png"
+	method position () = game.at(15,22)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
-			self.hablar("Roooo!!!")
-			game.sound("357tropius.mp3")
+			self.hablar("....!!!")
+			game.sound("Shedinja.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
-			self.hablar("Roooo...")
+			self.hablar(".......")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Tropius(owner=personaje))
+				personaje.agregarPokemon(new Shedinja(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -407,26 +396,27 @@ object tropius inherits Npc{
 	}
 }
 
-object regirock inherits Npc{
+object toxicroak inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 90
 	method PokemonTeam(){
-		self.agregarPokemon(new Regirock(side="enemy",owner=self))
+		self.agregarPokemon(new Toxicroak(side="enemy",owner=self))
 	}
-	method image () = "377regirock.png"
-	method position () = game.at(36,23)
+	method image () = "Toxicroak.png"
+	method position () = game.at(23,14)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
-			self.hablar("Gi ro gi ro reee!!!")
-			game.sound("377regirock.mp3")
+			self.hablar("Croak croak!!!")
+			game.sound("Toxicroak.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
-			self.hablar("Re re re gi gi ro...")
+			self.hablar("Croak...")
 			if(!cumplioProposito){
+				personaje.agregarPokemon(new Toxicroak(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -442,13 +432,13 @@ object bastiodon inherits Npc{
 	method PokemonTeam(){
 		self.agregarPokemon(new Bastiodon(side="enemy",owner=self))
 	}
-	method image () = "411bastiodon.png"
-	method position () = game.at(25,6)
+	method image () = "Bastiodon.png"
+	method position () = game.at(11,26)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Aaargh!!!")
-			game.sound("411bastiodon.mp3")
+			game.sound("Bastiodon.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
@@ -464,27 +454,27 @@ object bastiodon inherits Npc{
 	}
 }
 
-object tangrowth inherits Npc{
+object gardevoir inherits Npc{
 	var property npcDireccion = npcAbajo
 	var property perdio = false
 	var property iq = 70
 	method PokemonTeam(){
-		self.agregarPokemon(new Tangrowth(side="enemy",owner=self))
+		self.agregarPokemon(new Gardevoir(side="enemy",owner=self))
 	}
-	method image () = "465tangrowth.png"
-	method position () = game.at(27,18)
+	method image () = "Gardevoir.png"
+	method position () = game.at(28,13)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
-			self.hablar("Growth!!!")
-			game.sound("465tangrowth.mp3")
+			self.hablar("Weeeee!!!")
+			game.sound("Gardevoir.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true
 		}else{
-			self.hablar("Taaann...")
+			self.hablar("Wuuu...")
 			if(!cumplioProposito){
-				personaje.agregarPokemon(new Tangrowth(owner=personaje))
+				personaje.agregarPokemon(new Gardevoir(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
@@ -500,13 +490,13 @@ object kyurem inherits Npc{
 	method PokemonTeam(){
 		self.agregarPokemon(new Kyurem(side="enemy",owner=self))
 	}
-	method image () = "646kyurem.png"
+	method image () = "Kyurem.png"
 	method position () = game.at(22,23)
 	method interactuar (){
 		personaje.ocupado(true)
 		if (!perdio){
 			self.hablar("Kyuuuu!!!")
-			game.sound("646kyurem.mp3")
+			game.sound("Kyurem.mp3").play()
 			self.PokemonTeam()
 			game.schedule(2000,{batalla.iniciar(self)})
 			perdio = true

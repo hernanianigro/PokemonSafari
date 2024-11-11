@@ -1,11 +1,11 @@
 import wollok.game.*
-import personaje.*
+import contadorDeVida.*
+import movimientos.*
 import nivel.*
 import npc.*
-import tipo.*
+import personaje.*
 import pokemon.*
-import movimientos.*
-import contadorDeVida.*
+import tipo.*
 
 object batalla {
 	var property pokemonEnemigo  = new Pokemon()
@@ -19,11 +19,11 @@ object batalla {
 		pokemonsEnemigos = enemigo.pokemonTeam()
 		pokemonEnemigo = pokemonsEnemigos.first()
 		paredesMenu.generar()
-		game.addVisual(new ElementoInterfaz(image="fondoBatalla.png", position = game.at(0,0)))
+		game.addVisual(new ElementoInterfaz(image="fondobatalla.jpg", position = game.at(0,0)))
 		game.addVisual(new ElementoInterfaz(image="menu2.png", position = game.at(0,0)))
 		if(personaje.pokemonVivos().isEmpty()){
 			self.terminar()
-			throw new Exception(message= "No tienes nigun pokemon para pelear")
+			throw new Exception(message= "No tienes ningun pokemon para pelear")
 		}
 		pokemonAliado = personaje.pokemonVivos().first()
 		game.addVisual(pokemonAliado)
@@ -34,16 +34,35 @@ object batalla {
 		self.actualizarMoveset()
 		game.addVisual(pokemonEnemigo)
 		game.addVisual(seleccionarSkill)
-//		vida.fijarCifras(3)							  Por definir si la cantidad de cifras siempre es tres, mostrando ceros
-		vida.dibujarVidaDe(pokemonAliado)			//a la izquierda, o dejamos que sean las de la hp del pokemon
+//		vida.fijarCifras(3)		------------Por definir si la cantidad de cifras siempre es tres, mostrando ceros a la izquierda, o dejamos que sean las de la hp del pokemon
+		vida.dibujarVidaDe(pokemonAliado)
 		vida.dibujarVidaDe(pokemonEnemigo)
-		keyboard.up().onPressDo{seleccionarSkill.irVertical(arriba)}
-		keyboard.down().onPressDo{seleccionarSkill.irVertical(abajo)}
-		keyboard.left().onPressDo{seleccionarSkill.irHorizontal(izquierda)}
-		keyboard.right().onPressDo{seleccionarSkill.irHorizontal(derecha)}
-		keyboard.z().onPressDo{seleccionarSkill.interactuar()}
+		keyboard.up().onPressDo{seleccionarSkill.irVertical(arriba)
+			game.sound("button.mp3").play()}
+		keyboard.down().onPressDo{seleccionarSkill.irVertical(abajo)
+			game.sound("button.mp3").play()}
+		keyboard.left().onPressDo{seleccionarSkill.irHorizontal(izquierda)
+			game.sound("button.mp3").play()}
+		keyboard.right().onPressDo{seleccionarSkill.irHorizontal(derecha)
+			game.sound("button.mp3").play()}
+		keyboard.z().onPressDo{seleccionarSkill.interactuar()
+			game.sound("button.mp3").play()}
 		keyboard.x().onPressDo{seleccionarSkill.atras()}
 		keyboard.u().onPressDo({self.terminar()})
+	const position = game.at(0,0)
+	const ancho = game.width() - 1
+	const largo = game.height() - 1
+	const posParedes = []
+	(0 .. 9).forEach{ n => posParedes.add(new Position(x=n, y=0)) }
+	(0 .. 9).forEach{ n => posParedes.add(new Position(x=n, y=5)) }
+	(0 .. 5).forEach{ n => posParedes.add(new Position(x=0, y=n)) }
+	(0 .. 5).forEach{ n => posParedes.add(new Position(x=9, y=n)) }
+	posParedes.forEach { p => game.addVisual(new Pared(position = p))}
+	posParedes.forEach({ posParedes => self.dibujar(new Pared(position = posParedes)) })
+	}
+	method dibujar(dibujo) {
+		game.addVisual(dibujo)
+		return dibujo
 	}
 	method actualizarMoveset (){
 		move1.actualizar()
@@ -99,25 +118,23 @@ class ElementoInterfaz{
 class Move{
 	var property esMove = true
 	var property nombre
-	const numero
+	var numero
 	var property position
 	method image () = nombre.image()
 	method esAtravesable () = true
-	method actualizar () {
-		nombre = batalla.pokemonAliado().moveset().get(numero)
-	}
+	method actualizar () {nombre = batalla.pokemonAliado().moveset().get(numero)}
 }
 
 object move1 inherits Move (
 	nombre = batalla.pokemonAliado().moveset().get(0),
 	numero = 0,
-	position = game.at(1,2)
+	position = game.at(1,4)
 ){}
 
 object move2 inherits Move (
 	nombre = batalla.pokemonAliado().moveset().get(1),
 	numero = 1,
-	position = game.at(5,1)
+	position = game.at(8,1)
 ){}
 
 object move3 inherits Move (
@@ -129,20 +146,20 @@ object move3 inherits Move (
 object move4 inherits Move (
 	nombre = batalla.pokemonAliado().moveset().get(3),
 	numero = 3,
-	position = game.at(5,2)
+	position = game.at(8,4)
 ){}
 
 object seleccionarSkill{
-	var property position = game.at(1,2)
+	var property position = game.at(1,4)
 	var property direccion = izquierda
-	method image() = "seleccion.png"
+	method image() = "seleccionar.png"
 	method irHorizontal(nuevaDireccion){
 			direccion = nuevaDireccion
-			self.moverse(4)
+			self.moverse(7)
 	}
 	method irVertical(nuevaDireccion){
 			direccion = nuevaDireccion
-			self.moverse(1)
+			self.moverse(3)
 	}
 	method moverse (cantidad){
 		if(!personaje.ocupado() && !batalla.enemigo().ocupado() && game.getObjectsIn(direccion.avanzar(position,cantidad)).all({objeto => objeto.esAtravesable()})){
@@ -157,11 +174,11 @@ object seleccionarSkill{
 		}
 	}
 	method deducirAtaque(quienAtaca){
-		if (quienAtaca == batalla.pokemonAliado()) return game.getObjectsIn(position).find({elemento=>elemento.esMove()}).nombre() else {
+		if (quienAtaca == batalla.pokemonAliado()) return game.getObjectsIn(position).find({elemento=>elemento.respondsTo("esMove") && elemento.esMove()}).nombre() else {
 			if ((1 .. 100).anyOne() <= batalla.pokemonEnemigo().owner().iq()){
 				return batalla.pokemonEnemigo().moveset().max({ataque=>batalla.pokemonAliado().calcularEficacia(ataque)})
 			}
-			const random = new Range (start = 0, end = batalla.pokemonEnemigo().moveset().size()-1).anyOne()
+			var random = new Range (start = 0, end = batalla.pokemonEnemigo().moveset().size()-1).anyOne()
 			return batalla.pokemonEnemigo().moveset().get(random)
 		} 
 	}

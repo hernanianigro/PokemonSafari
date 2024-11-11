@@ -1,8 +1,11 @@
 import wollok.game.*
-import movimientos.*
-import tipo.*
 import batalla.*
+import contadorDeVida.*
+import movimientos.*
+import nivel.*
 import npc.*
+import personaje.*
+import tipo.*
 
 class Pokemon{
 	var property owner=self
@@ -14,27 +17,26 @@ class Pokemon{
 	var property spd=0
 	var property spe=0
 	var property types=[nulo,nulo]
-	var property moveset = []
+	var property moveset = [ninguno,ninguno,ninguno,ninguno]
 	var property side="ally"
 	var property hpActual=1
 	method image () = if (side == "ally"){
-			return name + "3Dback.gif"
+			return name + "3Dback.png"
 		}else{
-			return name + "3D.gif"
+			return name + "3D.png"
 		}
-		//name + "3D.gif"
 	method position (){
 		if (side == "ally"){
-			return game.at(5,4)
+			return game.at(9,9)
 		}else{
-			return game.at(15,7)
+			return game.at(25,15)
 		}
 	}
 	method posicionDeLaVida (){
 		if (side == "ally"){
-			return game.at(1,11)
+			return game.at(3,14)
 		}else{
-			return game.at(21,13)
+			return game.at(20,20)
 		}
 	}
 	method estaVivo () = hpActual != 0
@@ -106,7 +108,7 @@ class Torterra inherits Pokemon{
 		spd =85 
 		spe =56
 		types=[planta,suelo]
-		moveset = [hojasnavaja,terremoto,tumbaroca,cabezahierro]
+		moveset = [hojasnavaja,rayosolar,terremoto,bofetonlodo]
 		self.stats()
 	}
 }
@@ -121,22 +123,22 @@ class Blaziken inherits Pokemon{
 		spd =70 
 		spe =80
 		types=[fuego,lucha]
-		moveset = [cuchillada,lanzallamas,tajoaereo,esferaaural]
+		moveset = [colmillofuego,lanzallamas,brazomartillo,esferaaural]
 		self.stats()
 	}
 }
 
-class Samurott inherits Pokemon{
+class Lanturn inherits Pokemon{
 	method statsBase(){
-		name ="Samurott"
-		hp  =95
-		atk =100
-		def =85
-		spa =108
-		spd =70
-		spe =70
-		types=[agua,nulo]
-		moveset = [surf,megacuerno,acido,rayohielo]
+		name ="Lanturn"
+		hp  =125
+		atk =58
+		def =58
+		spa =76
+		spd =76
+		spe =67
+		types=[agua,electrico]
+		moveset = [tajoacuatico,surf,colmillotrueno,chispa]
 		self.stats()
 	}
 }
@@ -151,7 +153,7 @@ class Venusaur inherits Pokemon{
 		spd =100
 		spe =80
 		types=[planta,veneno]
-		moveset = [hojasnavaja,hypervoz,rayosolar,acido]
+		moveset = [hojasnavaja,rayosolar,puyanociva,acido]
 		self.stats()
 	}
 }
@@ -166,37 +168,37 @@ class Pidgeot inherits Pokemon{
 		spd =70
 		spe =101
 		types=[normal,volador]
-		moveset = [cuchillada,ataqueala,bofetonlodo,tajoaereo]
+		moveset = [cuchillada,hypervoz,ataqueala,tajoaereo]
 		self.stats()
 	}
 }
 
-class Arcanine inherits Pokemon{
+class Victini inherits Pokemon{
 	method statsBase () {
-		name ="Arcanine"
+		name ="Victini"
 		hp  =90
 		atk =110
 		def =80
 		spa =100
 		spd =80 
 		spe =95
-		types=[fuego,nulo]
-		moveset = [colmillofuego,colmillotrueno,colmillohielo,lanzallamas]
+		types=[psiquico,fuego]
+		moveset = [cabezazozen,psicorrayo,colmillofuego,lanzallamas]
 		self.stats()
 	}
 }
 
-class Rhyhorn inherits Pokemon{
+class Zweilous inherits Pokemon{
 	method statsBase () {
-		name ="Rhyhorn"
-		hp  =80
+		name ="Zweilous"
+		hp  =72
 		atk =85
-		def =95
-		spa =30
-		spd =30
-		spe =25
-		types=[suelo,roca]
-		moveset = [terremoto,megacuerno,bofetonlodo,tumbaroca]
+		def =70
+		spa =65
+		spd =70
+		spe =58
+		types=[oscuro,dragon]
+		moveset = [tajoumbrio,pulsoumbrio,garradragon,alientodragon]
 		self.stats()
 	}
 }
@@ -211,36 +213,36 @@ class Lapras inherits Pokemon{
 		spd =95
 		spe =60
 		types=[agua,hielo]
-		moveset = [surf,psicorrayo,rayohielo,esferaaural]
+		moveset = [tajoacuatico,surf,colmillohielo,rayohielo]
 		self.stats()
 	}
 }
-class Chinchou inherits Pokemon{
+class Rotom inherits Pokemon{
 	method statsBase () {
-		name ="Chinchou"
-		hp  =75
-		atk =38
-		def =38
-		spa =56
-		spd =56
-		spe =67
-		types=[agua,electrico]
-		moveset = [chispa,rayosenial,tajoacuatico,surf]
+		name ="Rotom"
+		hp  =50
+		atk =50
+		def =77
+		spa =95
+		spd =77
+		spe =91
+		types=[electrico,fantasma]
+		moveset = [colmillotrueno,chispa,puniosombra,bolasombra]
 		self.stats()
 	}
 }
 
-class Yanma inherits Pokemon{
+class Butterfree inherits Pokemon{
 	method statsBase () {
-		name ="Yanma"
-		hp  =65
-		atk =65
-		def =45
-		spa =75
-		spd =45
-		spe =95
+		name ="Butterfree"
+		hp  =60
+		atk =45
+		def =50
+		spa =90
+		spd =80
+		spe =70
 		types=[bicho,volador]
-		moveset = [ataqueala,rayosenial,vientofeerico,psicorrayo]
+		moveset = [megacuerno,rayosenial,ataqueala,tajoaereo]
 		self.stats()
 	}
 }
@@ -255,65 +257,65 @@ class Lairon inherits Pokemon{
 		spd =50
 		spe =40
 		types=[acero,roca]
-		moveset = [cabezahierro,poderpasado,metalaser,garradragon]
+		moveset = [cabezahierro,metalaser,tumbaroca,poderpasado]
 		self.stats()
 	}
 }
 
-class Sharpedo inherits Pokemon{
+class Wigglytuff inherits Pokemon{
 	method statsBase () {
-		name ="Sharpedo"
-		hp  =70
-		atk =120
-		def =40
-		spa =95
-		spd =40
-		spe =95
-		types=[agua,oscuro]
-		moveset = [surf,tajoumbrio,pulsoumbrio,colmillohielo]
-		self.stats()
-	}
-}
-
-class Trapinch inherits Pokemon{
-	method statsBase () {
-		name ="Trapinch"
-		hp  =45
-		atk =100
+		name ="Wigglytuff"
+		hp  =140
+		atk =70
 		def =45
-		spa =45
-		spd =45
-		spe =10
-		types=[suelo,nulo]
-		moveset = [juegorudo,bofetonlodo,puyanociva,colmillotrueno]
+		spa =85
+		spd =50
+		spe =45
+		types=[normal,hada]
+		moveset = [cuchillada,hypervoz,juegorudo,vientofeerico]
 		self.stats()
 	}
 }
-class Tropius inherits Pokemon{
+
+class Sandile inherits Pokemon{
 	method statsBase () {
-		name ="Tropius"
-		hp  =99
-		atk =68
-		def =83
-		spa =72
-		spd =87
-		spe =51
-		types=[planta,volador]
-		moveset = [ataqueala,tajoaereo,hojasnavaja,rayosolar]
+		name ="Sandile"
+		hp  =50
+		atk =72
+		def =35
+		spa =35
+		spd =35
+		spe =65
+		types=[suelo,oscuro]
+		moveset = [terremoto,bofetonlodo,tajoumbrio,pulsoumbrio]
 		self.stats()
 	}
 }
-class Regirock inherits Pokemon{
+class Shedinja inherits Pokemon{
 	method statsBase () {
-		name ="Regirock"
-		hp  =80
-		atk =100
-		def =200
-		spa =50
-		spd =100
-		spe =50
-		types=[roca,nulo]
-		moveset = [chispa,puniosombra,poderpasado,brazomartillo]
+		name ="Shedinja"
+		hp  =150
+		atk =90
+		def =45
+		spa =30
+		spd =30
+		spe =40
+		types=[bicho,fantasma]
+		moveset = [megacuerno,rayosenial,puniosombra,bolasombra]
+		self.stats()
+	}
+}
+class Toxicroak inherits Pokemon{
+	method statsBase () {
+		name ="Toxicroak"
+		hp  =83
+		atk =106
+		def =65
+		spa =86
+		spd =65
+		spe =85
+		types=[veneno,lucha]
+		moveset = [puyanociva,acido,brazomartillo,esferaaural]
 		self.stats()
 	}
 }
@@ -327,21 +329,21 @@ class Bastiodon inherits Pokemon{
 		spd =138
 		spe =30
 		types=[roca,acero]
-		moveset = [cabezahierro,cabezazozen,cuchillada,alientodragon]
+		moveset = [tumbaroca,poderpasado,cabezahierro,metalaser]
 		self.stats()
 	}
 }
-class Tangrowth inherits Pokemon{
+class Gardevoir inherits Pokemon{
 	method statsBase () {
-		name ="Tangrowth"
-		hp  =100
-		atk =100
-		def =125
-		spa =110
-		spd =50
-		spe =50
-		types=[planta,nulo]
-		moveset = [poderpasado,hojasnavaja,juegorudo,esferaaural]
+		name ="Gardevoir"
+		hp  =68
+		atk =65
+		def =65
+		spa =125
+		spd =115
+		spe =80
+		types=[psiquico,hada]
+		moveset = [cabezazozen,psicorrayo,juegorudo,vientofeerico]
 		self.stats()
 	}
 }
@@ -355,7 +357,7 @@ class Kyurem inherits Pokemon{
 		spd =90
 		spe =95
 		types=[dragon,hielo]
-		moveset = [alientodragon,rayohielo,hypervoz,bolasombra]
+		moveset = [garradragon,alientodragon,colmillohielo,rayohielo]
 		self.stats()
 	}
 }

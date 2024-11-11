@@ -1,4 +1,11 @@
+import wollok.game.*
+import batalla.*
+import contadorDeVida.*
 import movimientos.*
+import nivel.*
+import npc.*
+import personaje.*
+import pokemon.*
 
 class Tipo {
 	var property debilidades = []
