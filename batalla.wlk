@@ -1,4 +1,5 @@
 import wollok.game.*
+import barraDeVida.*
 import contadorDeVida.*
 import movimientos.*
 import nivel.*
@@ -34,7 +35,6 @@ object batalla {
 		self.actualizarMoveset()
 		game.addVisual(pokemonEnemigo)
 		game.addVisual(seleccionarSkill)
-//		vida.fijarCifras(3)		------------Por definir si la cantidad de cifras siempre es tres, mostrando ceros a la izquierda, o dejamos que sean las de la hp del pokemon
 		vida.dibujarVidaDe(pokemonAliado)
 		vida.dibujarVidaDe(pokemonEnemigo)
 		keyboard.up().onPressDo{seleccionarSkill.irVertical(arriba)
@@ -118,7 +118,7 @@ class ElementoInterfaz{
 class Move{
 	var property esMove = true
 	var property nombre
-	var numero
+	var property numero
 	var property position
 	method image () = nombre.image()
 	method esAtravesable () = true
@@ -178,15 +178,17 @@ object seleccionarSkill{
 			if ((1 .. 100).anyOne() <= batalla.pokemonEnemigo().owner().iq()){
 				return batalla.pokemonEnemigo().moveset().max({ataque=>batalla.pokemonAliado().calcularEficacia(ataque)})
 			}
-			var random = new Range (start = 0, end = batalla.pokemonEnemigo().moveset().size()-1).anyOne()
+			const random = new Range (start = 0, end = batalla.pokemonEnemigo().moveset().size()-1).anyOne()
 			return batalla.pokemonEnemigo().moveset().get(random)
 		} 
 	}
 	method atras(){}
 }
 
-object vida inherits MostrarNumero{
-	method dibujarVidaDe (quien){		
-		self.mostrar(quien.hpActual(), quien.posicionDeLaVida())
-	}
+object vida inherits MostrarBarra {
+    // Dibuja la barra de vida de un Pokémon específico en la posición indicada
+    method dibujarVidaDe(pokemon) {
+		const nombreImagen = pokemon.hpActual().toString() + ".png" // Convertir hpActual a String y agregar ".png"
+        self.mostrarImagen(nombreImagen, pokemon.posicionDeLaVida()) //cambiado
+    }
 }

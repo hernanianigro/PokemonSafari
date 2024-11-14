@@ -1,4 +1,5 @@
 import wollok.game.*
+import barraDeVida.*
 import batalla.*
 import contadorDeVida.*
 import movimientos.*

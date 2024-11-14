@@ -1,4 +1,5 @@
 import wollok.game.*
+import barraDeVida.*
 import batalla.*
 import movimientos.*
 import nivel.*
@@ -6,7 +7,7 @@ import npc.*
 import personaje.*
 import pokemon.*
 import tipo.*
-
+/*
 class MostrarNumero{
 	var cuantasCifras = 1
 	var contadorParaMostrar = 1
@@ -70,4 +71,4 @@ class Numero{
         y = posY
     }
 	method image() = numero.toString() + ".png"
-}
+}*/

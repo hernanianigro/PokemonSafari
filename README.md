@@ -7,7 +7,12 @@ En el tercer commit lo que hice fue empezar a agregar todo lo que era: como eran
 
 En el cuarto commit ya casi todo el código está completo, lo unico que hace falta completar es el metodo que dibuja la vida (hp) del pokemon "contadorDeVida.wlk" y como funcionan los ataques. Para completar lo siguiente (ver como termina la batalla, verificar que los ataques funcionen, que el pokemon vencido desaparezca del mapa y sea añadido al equipo) hay que solucionar eso primero.
 
-
+En el cuarto commit V2 aun no pude encontrar la solucion al problema de cómo mostrar la vida. Intente cambiar el numero individual de cada pokemon con una simple barra de 10hp pero el error persiste. Lo dejo aca por si alguien quiere solucionarlo:
+    wollok.lang.EvaluationError
+        at barraDeVida.MostrarBarra.mostrarImagen(nombreImagen, posicion) [barraDeVida.wlk:13]
+        at batalla.vida.dibujarVidaDe(pokemon) [batalla.wlk:190]
+        at batalla.batalla.iniciar(npc) [batalla.wlk:16]
+Tambien recuerden escribir sus nombres en la seccion "participantes".
 
 
 # Pokemon Safari Zone

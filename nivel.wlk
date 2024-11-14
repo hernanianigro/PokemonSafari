@@ -1,4 +1,5 @@
 import wollok.game.*
+import barraDeVida.*
 import batalla.*
 import contadorDeVida.*
 import movimientos.*
@@ -35,7 +36,7 @@ object nivel1 {
         (15 .. 18).forEach({ n => posicionesParedes.add(new Position(x = n, y = 9)) })
         (15 .. 18).forEach({ n => posicionesParedes.add(new Position(x = n, y = 10)) })
         (15 .. 18).forEach({ n => posicionesParedes.add(new Position(x = n, y = 11)) })
-        (15 .. 18).forEach({ n => posicionesParedes.add(new Position(x = n, y = 12)) })
+        (16 .. 17).forEach({ n => posicionesParedes.add(new Position(x = n, y = 12)) })
 		(0 .. largo).forEach({ n => posicionesParedes.add(new Position(x = 0, y = n)) }) // borde izquierda
         (0 .. largo).forEach({ n => posicionesParedes.add(new Position(x = 1, y = n)) })
         (0 .. largo).forEach({ n => posicionesParedes.add(new Position(x = 2, y = n)) })
@@ -48,11 +49,12 @@ object nivel1 {
         (17 .. largo).forEach({ n => posicionesParedes.add(new Position(x = 32, y = n)) })
         (4 .. 7).forEach({ n => posicionesParedes.add(new Position(x = n, y = 14)) })
         (9 .. 10).forEach({ n => posicionesParedes.add(new Position(x = n, y = 14)) })
-        (5 .. 9).forEach({ n => posicionesParedes.add(new Position(x = n, y = 21)) })
-        (15 .. 21).forEach({ n => posicionesParedes.add(new Position(x = 4, y = n)) })
-        (15 .. 21).forEach({ n => posicionesParedes.add(new Position(x = 10, y = n)) })
+        (4 .. 10).forEach({ n => posicionesParedes.add(new Position(x = n, y = 21)) })
+        (5 .. 7).forEach({ n => posicionesParedes.add(new Position(x = n, y = 20)) })
+        (14 .. 21).forEach({ n => posicionesParedes.add(new Position(x = 4, y = n)) })
+        (14 .. 21).forEach({ n => posicionesParedes.add(new Position(x = 10, y = n)) })
         (16 .. 20).forEach({ n => posicionesParedes.add(new Position(x = 5, y = n)) })
-        (16 .. 20).forEach({ n => posicionesParedes.add(new Position(x = 6, y = n)) })
+        (16 .. 20).forEach({ n => posicionesParedes.add(new Position(x = 7, y = n)) })
 		posicionesParedes.addAll(
 			[
 			new Position(x = 4, y = 1),
