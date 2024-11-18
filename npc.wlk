@@ -1,7 +1,5 @@
 import wollok.game.*
-import barraDeVida.*
 import batalla.*
-import contadorDeVida.*
 import movimientos.*
 import nivel.*
 import personaje.*
@@ -67,13 +65,20 @@ object profesorOak inherits Npc{
 	method position () = game.at(7,4)
 	method interactuar (){
 		personaje.ocupado(true)
-		self.hablar("Bienvenido! Aqui tienes 3 Pokemon para comenzar tu viaje.")
+		self.hablar("Bienvenido! Aqui tienes tus 3 Pokemon. Comienza tu aventura!")
 		game.sound("button.mp3").play()
 		if(!cumplioProposito){
 			personaje.agregarPokemon(new Torterra(owner=personaje))
 			personaje.agregarPokemon(new Blaziken(owner=personaje))
 			personaje.agregarPokemon(new Lanturn(owner=personaje))
 			cumplioProposito = true
+		}
+		if(cumplioProposito&&venusaur.perdio()&&pidgeot.perdio()&&victini.perdio()&&zweilous.perdio()&&lapras.perdio()&&butterfree.perdio()&&rotom.perdio()&&lairon.perdio()&&wigglytuff.perdio()&&sandile.perdio()&&shedinja.perdio()&&toxicroak.perdio()&&bastiodon.perdio()&&gardevoir.perdio()&&kyurem.perdio()){
+		self.hablar("Felicidades! Has derrotado a todos los Pokemon!")
+		game.sound("winner.mp3").play()
+		game.clear()
+		game.addVisual("fin.jpg").at(0,0)
+		game.sound("ending.mp3").play()
 		}
 		game.schedule(2000,{personaje.ocupado(false)})
 	}
@@ -98,12 +103,12 @@ object venusaur inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Venu...")
+			game.sound("Venusaur.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Venusaur(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -127,12 +132,12 @@ object pidgeot inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Piii...")
+			game.sound("Pidgeot.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Pidgeot(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -156,11 +161,11 @@ object victini inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Viii...")
+			game.sound("Victini.mp3").play()
 			if(!cumplioProposito){
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -184,12 +189,14 @@ object zweilous inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Zzzz...")
+			game.sound("Zweilous.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Zweilous(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
+			//self.position() game.at(50,50)
+			//game.removeVisual(self)
 		}
 	}
 }
@@ -213,12 +220,12 @@ object lapras inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Lapras...")
+			game.sound("Lapras.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Lapras(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -242,12 +249,12 @@ object rotom inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Bzzzt...")
+			game.sound("Rotom.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Rotom(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -271,12 +278,12 @@ object butterfree inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Free...")
+			game.sound("Butterfree.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Butterfree(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -300,12 +307,12 @@ object lairon inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Grrr...")
+			game.sound("Lairon.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Lairon(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -329,12 +336,12 @@ object wigglytuff inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Wiggly...")
+			game.sound("Wigglytuff.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Wigglytuff(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -358,12 +365,12 @@ object sandile inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Chomp...")
+			game.sound("Sandile.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Sandile(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -387,12 +394,12 @@ object shedinja inherits Npc{
 			perdio = true
 		}else{
 			self.hablar(".......")
+			game.sound("Shedinja.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Shedinja(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -416,12 +423,12 @@ object toxicroak inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Croak...")
+			game.sound("Toxicroak.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Toxicroak(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -445,12 +452,12 @@ object bastiodon inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Grrr...")
+			game.sound("Bastiodon.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Bastiodon(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -474,12 +481,12 @@ object gardevoir inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Wuuu...")
+			game.sound("Gardevoir.mp3").play()
 			if(!cumplioProposito){
 				personaje.agregarPokemon(new Gardevoir(owner=personaje))
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }
@@ -503,11 +510,11 @@ object kyurem inherits Npc{
 			perdio = true
 		}else{
 			self.hablar("Kyuuuu...")
+			game.sound("Kyurem.mp3").play()
 			if(!cumplioProposito){
 				cumplioProposito = true
 				}
 			game.schedule(2000,{personaje.ocupado(false)})
-			self.position() game.at(50,50)
 		}
 	}
 }

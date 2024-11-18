@@ -1,7 +1,5 @@
 import wollok.game.*
-import barraDeVida.*
 import batalla.*
-import contadorDeVida.*
 import nivel.*
 import npc.*
 import personaje.*
@@ -49,8 +47,8 @@ const cuchillada =new Ataque(
 	accuracy = 100,
 	priority =false
 )
-const hypervoz =new Ataque(
-	name = "hyper voz",
+const hipervoz =new Ataque(
+	name = "hiper voz",
 	type = ataqueEspecial,
 	damagetype = normal,
 	dmg = 2,

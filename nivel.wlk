@@ -1,7 +1,5 @@
 import wollok.game.*
-import barraDeVida.*
 import batalla.*
-import contadorDeVida.*
 import movimientos.*
 import npc.*
 import personaje.*
@@ -9,11 +7,12 @@ import pokemon.*
 import tipo.*
 
 object nivel1 {
+    const musica = game.sound("Safari.mp3")
 	method cargar() {
     	game.boardGround("fondoSafari.jpg")
         game.addVisual(new ElementoInterfaz(image="fondoSafari.jpg", position = game.at(0,0)))
-        const musica = game.sound("Safari.mp3")
         musica.shouldLoop(true)
+        //game.schedule(0,{batalla.battle.stop()})
         game.schedule(500,{musica.play()})
         const position = game.at(0,0)
 		//PAREDES
@@ -115,11 +114,6 @@ object nivel1 {
         keyboard.right().onPressDo{if (game.width()-2 > personaje.position().x()) personaje.ir(derecha)}
         keyboard.z().onPressDo({personaje.interactuar()})
         keyboard.enter().onPressDo({juego.empezar()})
-        //keyboard.up().onHoldDo({if (game.height()-1 > personaje.position().y()) personaje.irArriba() })
-		//keyboard.down().onHoldDo({if (game.height()-30 < personaje.position().y()) personaje.irAbajo() })
-		//keyboard.left().onHoldDo({if (game.width()-40 < personaje.position().x()) personaje.irIzquierda() })
-		//keyboard.right().onHoldDo({if (game.width()-1 > personaje.position().x()) personaje.irDerecha() })
-		//COLISIONES.onPressDo({ self.comprobarSiGano(cajas) })
 	}
 	method restart() {
 		game.clear()
@@ -161,3 +155,9 @@ object pantallaDeInicio{
 			return "title2.jpg"
 	}
 }
+
+/*object canciones {
+    const property opening = game.sound("opening.mp3")
+    const property battle = game.sound("battle.mp3")
+    const property ending = game.sound("ending.mp3")
+}*/

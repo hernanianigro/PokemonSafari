@@ -1,7 +1,5 @@
 import wollok.game.*
-import barraDeVida.*
 import batalla.*
-import contadorDeVida.*
 import movimientos.*
 import nivel.*
 import npc.*
@@ -15,6 +13,9 @@ program PokeSafari {
 	game.width(40)
 	game.addVisual(pantallaDeInicio)
 	pantallaDeInicio.iniciarAnimacion()
+	const op = game.sound("opening.mp3")
+	game.schedule(0,{op.play()})
+	game.schedule(10000,{op.stop()})
 	keyboard.enter().onPressDo({
 	    juego.empezar()  // Inicia el juego
 		game.boardGround("fondoSafari.jpg")

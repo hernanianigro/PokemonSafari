@@ -1,19 +1,10 @@
 import wollok.game.*
-import barraDeVida.*
 import batalla.*
-import contadorDeVida.*
 import movimientos.*
 import nivel.*
 import npc.*
 import pokemon.*
 import tipo.*
-
-object musica {
-	const music = game.sound("mainBMG.WAV")
-    method replay() {music.shouldLoop(true)
-    game.schedule(500, {music.play()} )
-	}
-}
 
 object personaje {
 	var property position = game.at(7,2)

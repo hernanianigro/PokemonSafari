@@ -1,7 +1,5 @@
 import wollok.game.*
-import barraDeVida.*
 import batalla.*
-import contadorDeVida.*
 import movimientos.*
 import nivel.*
 import npc.*
@@ -26,7 +24,7 @@ object normal inherits Tipo (
 ){}
 
 object lucha inherits Tipo (
-	debilidades = [normal,volador,psiquico,hada], 
+	debilidades = [volador,psiquico,hada], 
 	resistencias = [roca,bicho,oscuro]
 ){}
 

@@ -1,14 +1,12 @@
 import wollok.game.*
-import barraDeVida.*
 import batalla.*
-import contadorDeVida.*
 import movimientos.*
 import nivel.*
 import npc.*
 import personaje.*
 import tipo.*
 
-class Pokemon inherits MostrarBarra{
+class Pokemon {
 	var property owner=self
 	var property name=""
 	var property hp=0
@@ -48,6 +46,7 @@ class Pokemon inherits MostrarBarra{
 	method atacar(ataque,objetivo){
 		self.owner().ocupado(true)
 		game.say(self, name + " ha usado " + ataque.name())
+		game.sound("attack.mp3").play()
         if (self.elAtaqueAcerto(ataque, objetivo)){
 			objetivo.recibirDanio (ataque,self)	
 		}
@@ -93,30 +92,32 @@ class Pokemon inherits MostrarBarra{
 		spe = self.calcularStat(spe)
 		hpActual=hp
 	}
-
-	// Método para inicializar los valores base del Pokémon
-    method statsBase() {}
-
-    // Método para actualizar la barra de vida en pantalla
-    method actualizarBarraDeVida() {
-        const posicion = if (side == "ally"){
-			return game.at(20,11)
-		}else{
-			return game.at(16,22)
-		}
-        const nombreImagen = hpActual.toString() + ".png" // Selecciona la imagen según hpActual
-        // Método ficticio para dibujar imagen en una posición; debes adaptarlo a cómo maneja imágenes tu entorno
-        self.mostrarImagen(nombreImagen, posicion)
-    }
-
-    // Método para modificar el hpActual y actualizar la barra de vida
-    method cambiarHp(nuevoHp) {
-        hpActual = nuevoHp
-        if (hpActual < 0) hpActual = 0 // El hp no puede ser negativo
-        if (hpActual > hp) hpActual = hp // No puede exceder el máximo
-        self.actualizarBarraDeVida()
-    }
+	method statsBase() {}
 }
+
+/*class PokemonAliado inherits Pokemon{
+	var property pokemonAliado = personaje.pokemonVivos().first()
+	method reducirVida(cantidad) {
+        	hp = 0.max(hp - cantidad)
+			self.actualizarBarraDeVidaAliado()
+	}
+    method actualizarBarraDeVidaAliado() {
+        var imagen = hp.toString() + ".png"
+        game.addVisual(imagen).at(imagen, 20, 11)
+	}
+}
+
+class PokemonEnemigo inherits Pokemon{
+	var property pokemonEnemigo = Npc.pokemonTeam().first()
+	method reducirVida(cantidad) {
+        	hp = 0.max(hp - cantidad)
+			self.actualizarBarraDeVidaEnemigo()
+	}
+    method actualizarBarraDeVidaEnemigo() {
+        var imagen = hp.toString() + ".png"
+        game.addVisual(imagen).at(imagen, 16, 22)
+	}
+}*/
 
 class Torterra inherits Pokemon{
 	override method statsBase(){
@@ -127,7 +128,7 @@ class Torterra inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =56
+		spe =80
 		types=[planta,suelo]
 		moveset = [hojasnavaja,rayosolar,terremoto,bofetonlodo]
 		self.stats()
@@ -159,7 +160,7 @@ class Lanturn inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =67
+		spe =80
 		types=[agua,electrico]
 		moveset = [tajoacuatico,surf,colmillotrueno,chispa]
 		self.stats()
@@ -175,7 +176,7 @@ class Venusaur inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =80
+		spe =65
 		types=[planta,veneno]
 		moveset = [hojasnavaja,rayosolar,puyanociva,acido]
 		self.stats()
@@ -191,9 +192,9 @@ class Pidgeot inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =101
+		spe =65
 		types=[normal,volador]
-		moveset = [cuchillada,hypervoz,ataqueala,tajoaereo]
+		moveset = [cuchillada,hipervoz,ataqueala,tajoaereo]
 		self.stats()
 	}
 }
@@ -201,13 +202,13 @@ class Pidgeot inherits Pokemon{
 class Victini inherits Pokemon{
 	override method statsBase () {
 		name ="Victini"
-		hp  =10
+		hp  =15
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
 		spa =2
 		spd =2
-		spe =95
+		spe =90
 		types=[psiquico,fuego]
 		moveset = [cabezazozen,psicorrayo,colmillofuego,lanzallamas]
 		self.stats()
@@ -223,7 +224,7 @@ class Zweilous inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =58
+		spe =65
 		types=[oscuro,dragon]
 		moveset = [tajoumbrio,pulsoumbrio,garradragon,alientodragon]
 		self.stats()
@@ -239,7 +240,7 @@ class Lapras inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =60
+		spe =65
 		types=[agua,hielo]
 		moveset = [tajoacuatico,surf,colmillohielo,rayohielo]
 		self.stats()
@@ -254,7 +255,7 @@ class Rotom inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =91
+		spe =65
 		types=[electrico,fantasma]
 		moveset = [colmillotrueno,chispa,puniosombra,bolasombra]
 		self.stats()
@@ -270,7 +271,7 @@ class Butterfree inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =70
+		spe =65
 		types=[bicho,volador]
 		moveset = [megacuerno,rayosenial,ataqueala,tajoaereo]
 		self.stats()
@@ -286,7 +287,7 @@ class Lairon inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =40
+		spe =65
 		types=[acero,roca]
 		moveset = [cabezahierro,metalaser,tumbaroca,poderpasado]
 		self.stats()
@@ -302,9 +303,9 @@ class Wigglytuff inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =45
+		spe =65
 		types=[normal,hada]
-		moveset = [cuchillada,hypervoz,juegorudo,vientofeerico]
+		moveset = [cuchillada,hipervoz,juegorudo,vientofeerico]
 		self.stats()
 	}
 }
@@ -333,7 +334,7 @@ class Shedinja inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =40
+		spe =65
 		types=[bicho,fantasma]
 		moveset = [megacuerno,rayosenial,puniosombra,bolasombra]
 		self.stats()
@@ -348,7 +349,7 @@ class Toxicroak inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =85
+		spe =65
 		types=[veneno,lucha]
 		moveset = [puyanociva,acido,brazomartillo,esferaaural]
 		self.stats()
@@ -363,7 +364,7 @@ class Bastiodon inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =30
+		spe =65
 		types=[roca,acero]
 		moveset = [tumbaroca,poderpasado,cabezahierro,metalaser]
 		self.stats()
@@ -378,7 +379,7 @@ class Gardevoir inherits Pokemon{
 		def =2
 		spa =2
 		spd =2
-		spe =80
+		spe =65
 		types=[psiquico,hada]
 		moveset = [cabezazozen,psicorrayo,juegorudo,vientofeerico]
 		self.stats()
@@ -387,13 +388,13 @@ class Gardevoir inherits Pokemon{
 class Kyurem inherits Pokemon{
 	override method statsBase () {
 		name ="Kyurem"
-		hp  =10
+		hp  =20
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
 		spa =2
 		spd =2
-		spe =95
+		spe =100
 		types=[dragon,hielo]
 		moveset = [garradragon,alientodragon,colmillohielo,rayohielo]
 		self.stats()

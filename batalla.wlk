@@ -1,6 +1,4 @@
 import wollok.game.*
-import barraDeVida.*
-import contadorDeVida.*
 import movimientos.*
 import nivel.*
 import npc.*
@@ -28,22 +26,24 @@ object batalla {
 		}
 		pokemonAliado = personaje.pokemonVivos().first()
 		game.addVisual(pokemonAliado)
+		self.actualizarMoveset()
 		game.addVisual(move1)
 		game.addVisual(move2)
 		game.addVisual(move3)
 		game.addVisual(move4)
-		self.actualizarMoveset()
 		game.addVisual(pokemonEnemigo)
 		game.addVisual(seleccionarSkill)
-		vida.dibujarVidaDe(pokemonAliado)
-		vida.dibujarVidaDe(pokemonEnemigo)
-		keyboard.up().onPressDo{seleccionarSkill.irVertical(arriba)
+		keyboard.up().onPressDo{if (game.height()-26 > seleccionarSkill.position().y())
+			seleccionarSkill.irVertical(arriba)
 			game.sound("button.mp3").play()}
-		keyboard.down().onPressDo{seleccionarSkill.irVertical(abajo)
+		keyboard.down().onPressDo{if (game.height()-29 < seleccionarSkill.position().y())
+			seleccionarSkill.irVertical(abajo)
 			game.sound("button.mp3").play()}
-		keyboard.left().onPressDo{seleccionarSkill.irHorizontal(izquierda)
+		keyboard.left().onPressDo{if (game.width()-39 < seleccionarSkill.position().x())
+			seleccionarSkill.irHorizontal(izquierda)
 			game.sound("button.mp3").play()}
-		keyboard.right().onPressDo{seleccionarSkill.irHorizontal(derecha)
+		keyboard.right().onPressDo{if (game.width()-32 > seleccionarSkill.position().x())
+			seleccionarSkill.irHorizontal(derecha)
 			game.sound("button.mp3").play()}
 		keyboard.z().onPressDo{seleccionarSkill.interactuar()
 			game.sound("button.mp3").play()}
@@ -81,7 +81,6 @@ object batalla {
 				game.removeVisual(pokemonEnemigo)
 				pokemonEnemigo = pokemonRestantes.first()
 				game.addVisual(pokemonEnemigo)
-				vida.dibujarVidaDe(pokemonEnemigo)
 				personaje.ocupado(false)
 			}
 		}else{
@@ -90,7 +89,6 @@ object batalla {
 				game.removeVisual(pokemonAliado)
 				pokemonAliado = pokemonRestantes.first()
 				game.addVisual(pokemonAliado)
-				vida.dibujarVidaDe(pokemonAliado)
 				self.actualizarMoveset()
 				enemigo.ocupado(false)
 			}
@@ -134,7 +132,7 @@ object move1 inherits Move (
 object move2 inherits Move (
 	nombre = batalla.pokemonAliado().moveset().get(1),
 	numero = 1,
-	position = game.at(8,1)
+	position = game.at(8,4)
 ){}
 
 object move3 inherits Move (
@@ -146,12 +144,13 @@ object move3 inherits Move (
 object move4 inherits Move (
 	nombre = batalla.pokemonAliado().moveset().get(3),
 	numero = 3,
-	position = game.at(8,4)
+	position = game.at(8,1)
 ){}
 
 object seleccionarSkill{
 	var property position = game.at(1,4)
 	var property direccion = izquierda
+	method direcciona() {return direccion}
 	method image() = "seleccionar.png"
 	method irHorizontal(nuevaDireccion){
 			direccion = nuevaDireccion
@@ -170,11 +169,11 @@ object seleccionarSkill{
 		if (!personaje.ocupado() && !batalla.enemigo().ocupado()){
 			batalla.elPokemonMasRapido().owner().ocupado(true)
 			batalla.elPokemonMasRapido().atacar(self.deducirAtaque(batalla.elPokemonMasRapido()),batalla.elPokemonMasLento())
-			game.schedule(6000,{if(!batalla.elPokemonMasRapido().owner().ocupado())batalla.elPokemonMasLento().atacar(self.deducirAtaque(batalla.elPokemonMasLento()),batalla.elPokemonMasRapido())})
+			game.schedule(5000,{if(!batalla.elPokemonMasRapido().owner().ocupado())batalla.elPokemonMasLento().atacar(self.deducirAtaque(batalla.elPokemonMasLento()),batalla.elPokemonMasRapido())})
 		}
 	}
 	method deducirAtaque(quienAtaca){
-		if (quienAtaca == batalla.pokemonAliado()) return game.getObjectsIn(position).find({elemento=>elemento.respondsTo("esMove") && elemento.esMove()}).nombre() else {
+		if (quienAtaca == batalla.pokemonAliado()) return game.getObjectsIn(position).find({elemento=>elemento/*.respondsTo("esMove") && elemento*/.esMove()}).nombre() else {
 			if ((1 .. 100).anyOne() <= batalla.pokemonEnemigo().owner().iq()){
 				return batalla.pokemonEnemigo().moveset().max({ataque=>batalla.pokemonAliado().calcularEficacia(ataque)})
 			}
@@ -183,12 +182,4 @@ object seleccionarSkill{
 		} 
 	}
 	method atras(){}
-}
-
-object vida inherits MostrarBarra {
-    // Dibuja la barra de vida de un Pokémon específico en la posición indicada
-    method dibujarVidaDe(pokemon) {
-		const nombreImagen = pokemon.hpActual().toString() + ".png" // Convertir hpActual a String y agregar ".png"
-        self.mostrarImagen(nombreImagen, pokemon.posicionDeLaVida()) //cambiado
-    }
 }
