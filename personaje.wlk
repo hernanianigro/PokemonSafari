@@ -1,5 +1,6 @@
 import wollok.game.*
 import batalla.*
+import dialogos.*
 import movimientos.*
 import nivel.*
 import npc.*
@@ -34,6 +35,7 @@ object personaje {
 		return pokemonTeam.filter({pokemon=>pokemon.estaVivo()})
 	}
 }
+
 object izquierda {
 	method opuesta() = npcDerecha
 	method image() {return "personajeIzquierda.png"}
@@ -59,6 +61,7 @@ class Agua {
 	const property position
 	method movete(direccion) { }
 	method puedePisarte(_) = true
+	method esAtravesable() = false
 	method image() = "water2.gif"
 }
 
@@ -66,6 +69,7 @@ class Rio {
 	const property position
 	method movete(direccion) { }
 	method puedePisarte(_) = false
+	method esAtravesable() = false
 	method image() = "river.gif"
 }
 
@@ -73,6 +77,7 @@ class Cascada {
 	const property position
 	method movete(direccion) { }
 	method puedePisarte(_) = false
+	method esAtravesable() = false
 	method image() = "waterfall.gif"
 }
 
@@ -82,6 +87,7 @@ class Pared {
 		throw new DomainException(message = "No puedo pasar por aqui.", source = personaje)
 	}
 	method puedePisarte(_) = false
+	method esAtravesable() = false
 }
 
 object paredesMenu {
@@ -97,3 +103,38 @@ object paredesMenu {
 	}
 	method puedePisarte(_) = false
 }
+
+class Teleports {
+	var property position
+	method esAtravesable() = true
+	method irDerecha(){
+		game.clear()
+		nivelDerecha.cargar()
+	}
+	method irIzquierda(){
+		game.clear()
+		nivelIzquierda.cargar()
+	}
+	method irArriba(){
+		game.clear()
+		nivelArriba.cargar()
+	}
+	method irCentral(){
+		game.clear()
+		nivelCentral.cargar()
+	}
+}
+object teleport1A inherits Teleports(position = game.at(14,7)){}
+object teleport2A inherits Teleports(position = game.at(14,8)){}
+object teleport3A inherits Teleports(position = game.at(6,14)){}
+object teleport4A inherits Teleports(position = game.at(7,14)){}
+object teleport5A inherits Teleports(position = game.at(8,14)){}
+object teleport6A inherits Teleports(position = game.at(0,7)){}
+object teleport7A inherits Teleports(position = game.at(0,8)){}
+object teleport1B inherits Teleports(position = game.at(0,7)){}
+object teleport2B inherits Teleports(position = game.at(0,8)){}
+object teleport3B inherits Teleports(position = game.at(6,0)){}
+object teleport4B inherits Teleports(position = game.at(7,0)){}
+object teleport5B inherits Teleports(position = game.at(8,0)){}
+object teleport6B inherits Teleports(position = game.at(14,7)){}
+object teleport7B inherits Teleports(position = game.at(14,8)){}

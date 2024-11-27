@@ -1,19 +1,39 @@
 import wollok.game.*
 import batalla.*
+import dialogos.*
 import movimientos.*
 import nivel.*
 import npc.*
 import personaje.*
 import tipo.*
 
+object hitAliado {
+	var property image = "hit.gif"
+	var property position = game.at(1,4)
+	method golpear(){
+			game.addVisual(self)
+	}
+	method quitar(){
+			game.removeVisual(self)
+	}
+}
+object hitEnemigo {
+	var property image = "hit.gif"
+	var property position = game.at(8,7)
+	method golpear(){
+			game.addVisual(self)
+	}
+	method quitar(){
+			game.removeVisual(self)
+	}
+}
+//------------------------------------------------------------------------------------------
 class Pokemon {
 	var property owner=self
 	var property name=""
 	var property hp=0
 	var property atk=0
 	var property def=0
-	var property spa=0
-	var property spd=0
 	var property spe=0
 	var property types=[nulo,nulo]
 	var property moveset = [ninguno,ninguno,ninguno,ninguno]
@@ -26,16 +46,16 @@ class Pokemon {
 		}
 	method position (){
 		if (side == "ally"){
-			return game.at(9,9)
+			return game.at(1,4)
 		}else{
-			return game.at(25,15)
+			return game.at(8,7)
 		}
 	}
-	method posicionDeLaVida (){
+	method hitPosition (){
 		if (side == "ally"){
-			return game.at(20,11)
+			return game.at(1,4)
 		}else{
-			return game.at(16,22)
+			return game.at(8,7)
 		}
 	}
 	method estaVivo () = hpActual != 0
@@ -45,19 +65,27 @@ class Pokemon {
 	method elAtaqueAcerto (ataque, objetivo) = (1 .. 100).anyOne() <= ataque.accuracy()
 	method atacar(ataque,objetivo){
 		self.owner().ocupado(true)
-		game.say(self, name + " ha usado " + ataque.name())
+		game.say(self, name + " ha usado " + ataque.name() + "!")
+		if (objetivo.side() == "ally"){
+			hitAliado.golpear()
+			game.schedule(400,{hitAliado.quitar()})}
+		else{
+			hitEnemigo.golpear()
+			game.schedule(400,{hitEnemigo.quitar()})}
 		game.sound("attack.mp3").play()
-        if (self.elAtaqueAcerto(ataque, objetivo)){
+		if (self.elAtaqueAcerto(ataque, objetivo)){
 			objetivo.recibirDanio (ataque,self)	
+			vidaAliado.actualizar()
+			vidaEnemigo.actualizar()
 		}
 		else{
-			game.schedule(2000,{game.say(objetivo,objetivo.name()+" esquivo el ataque.")})
+			game.schedule(2000,{game.say(objetivo,objetivo.name()+" esquivo el ataque!")})
 			game.schedule(6000,{owner.ocupado(false)})
 		}
 	}
 	
 	method recibirDanio (ataque,pokemon){
-		hpActual = (hpActual - self.danio(ataque,pokemon)).max(0)
+		hpActual = (hpActual - self.danio(ataque,pokemon)).max(0).round()
 		if (self.hpActual() == 0){
 				game.schedule(4000,{game.say(self, self.name() + " no puede continuar.")})
 				game.schedule(6500,{batalla.pokemonKO(self)})
@@ -73,7 +101,7 @@ class Pokemon {
 	}
 	method calcularMultiplicador(ataque,pokemon){
 		var multiplicador= self.calcularEficacia(ataque)
-		if (multiplicador == 0) game.schedule(2000,{game.say(self,"Es inmune al ataque!")})else{
+		if (multiplicador == 0) game.schedule(2000,{game.say(self, name + " es inmune al ataque!")})else{
 			if (multiplicador >= 2) game.schedule(2000,{game.say(self,"Es super efectivo!")})
 			if (multiplicador <= 0.5) game.schedule(2000,{game.say(self,"No es muy efectivo...")})
 			if(multiplicador < 2 && multiplicador > 0.5) game.schedule(2000,{game.say(self,"El ataque dio en el blanco!")})
@@ -87,38 +115,12 @@ class Pokemon {
 		hp= self.calcularStat(hp)
 		atk= self.calcularStat(atk)
 		def= self.calcularStat(def)
-		spa= self.calcularStat(spa)
-		spd= self.calcularStat(spd)
 		spe = self.calcularStat(spe)
 		hpActual=hp
 	}
 	method statsBase() {}
 }
-
-/*class PokemonAliado inherits Pokemon{
-	var property pokemonAliado = personaje.pokemonVivos().first()
-	method reducirVida(cantidad) {
-        	hp = 0.max(hp - cantidad)
-			self.actualizarBarraDeVidaAliado()
-	}
-    method actualizarBarraDeVidaAliado() {
-        var imagen = hp.toString() + ".png"
-        game.addVisual(imagen).at(imagen, 20, 11)
-	}
-}
-
-class PokemonEnemigo inherits Pokemon{
-	var property pokemonEnemigo = Npc.pokemonTeam().first()
-	method reducirVida(cantidad) {
-        	hp = 0.max(hp - cantidad)
-			self.actualizarBarraDeVidaEnemigo()
-	}
-    method actualizarBarraDeVidaEnemigo() {
-        var imagen = hp.toString() + ".png"
-        game.addVisual(imagen).at(imagen, 16, 22)
-	}
-}*/
-
+//------------------------------------------------------------------------------------------
 class Torterra inherits Pokemon{
 	override method statsBase(){
 		name ="Torterra"
@@ -126,15 +128,12 @@ class Torterra inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =80
 		types=[planta,suelo]
-		moveset = [hojasnavaja,rayosolar,terremoto,bofetonlodo]
-		self.stats()
+		moveset = [hojasnavaja,terremoto,cabezahierro,cuchillada]
 	}
 }
-
+//------------------------------------------------------------------------------------------
 class Blaziken inherits Pokemon{
 	override method statsBase(){
 		name ="Blaziken"
@@ -142,15 +141,12 @@ class Blaziken inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =80
 		types=[fuego,lucha]
-		moveset = [colmillofuego,lanzallamas,brazomartillo,esferaaural]
-		self.stats()
+		moveset = [lanzallamas,brazomartillo,tumbaroca,tajoumbrio]
 	}
 }
-
+//------------------------------------------------------------------------------------------
 class Lanturn inherits Pokemon{
 	override method statsBase(){
 		name ="Lanturn"
@@ -158,15 +154,12 @@ class Lanturn inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =80
 		types=[agua,electrico]
-		moveset = [tajoacuatico,surf,colmillotrueno,chispa]
-		self.stats()
+		moveset = [surf,chispa,rayosenial,bolasombra]
 	}
 }
-
+//------------------------------------------------------------------------------------------
 class Venusaur inherits Pokemon{
 	override method statsBase(){
 		name ="Venusaur"
@@ -174,15 +167,12 @@ class Venusaur inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =65
 		types=[planta,veneno]
-		moveset = [hojasnavaja,rayosolar,puyanociva,acido]
-		self.stats()
+		moveset = [hojasnavaja,acido,tumbaroca,psicorrayo]
 	}
 }
-
+//------------------------------------------------------------------------------------------
 class Pidgeot inherits Pokemon{
 	override method statsBase () {
 		name ="Pidgeot"
@@ -190,47 +180,12 @@ class Pidgeot inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =65
 		types=[normal,volador]
-		moveset = [cuchillada,hipervoz,ataqueala,tajoaereo]
-		self.stats()
+		moveset = [cuchillada,ataqueala,vientofeerico,tajoumbrio]
 	}
 }
-
-class Victini inherits Pokemon{
-	override method statsBase () {
-		name ="Victini"
-		hp  =15
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =90
-		types=[psiquico,fuego]
-		moveset = [cabezazozen,psicorrayo,colmillofuego,lanzallamas]
-		self.stats()
-	}
-}
-
-class Zweilous inherits Pokemon{
-	override method statsBase () {
-		name ="Zweilous"
-		hp  =10
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =65
-		types=[oscuro,dragon]
-		moveset = [tajoumbrio,pulsoumbrio,garradragon,alientodragon]
-		self.stats()
-	}
-}
-
+//------------------------------------------------------------------------------------------
 class Lapras inherits Pokemon{
 	override method statsBase () {
 		name ="Lapras"
@@ -238,30 +193,12 @@ class Lapras inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =65
 		types=[agua,hielo]
-		moveset = [tajoacuatico,surf,colmillohielo,rayohielo]
-		self.stats()
+		moveset = [surf,rayohielo,psicorrayo,alientodragon]
 	}
 }
-class Rotom inherits Pokemon{
-	override method statsBase () {
-		name ="Rotom"
-		hp  =10
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =65
-		types=[electrico,fantasma]
-		moveset = [colmillotrueno,chispa,puniosombra,bolasombra]
-		self.stats()
-	}
-}
-
+//------------------------------------------------------------------------------------------
 class Butterfree inherits Pokemon{
 	override method statsBase () {
 		name ="Butterfree"
@@ -269,15 +206,12 @@ class Butterfree inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =65
 		types=[bicho,volador]
-		moveset = [megacuerno,rayosenial,ataqueala,tajoaereo]
-		self.stats()
+		moveset = [rayosenial,ataqueala,acido,chispa]
 	}
 }
-
+//------------------------------------------------------------------------------------------
 class Lairon inherits Pokemon{
 	override method statsBase () {
 		name ="Lairon"
@@ -285,15 +219,12 @@ class Lairon inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =65
 		types=[acero,roca]
-		moveset = [cabezahierro,metalaser,tumbaroca,poderpasado]
-		self.stats()
+		moveset = [cabezahierro,tumbaroca,terremoto,brazomartillo]
 	}
 }
-
+//------------------------------------------------------------------------------------------
 class Wigglytuff inherits Pokemon{
 	override method statsBase () {
 		name ="Wigglytuff"
@@ -301,90 +232,12 @@ class Wigglytuff inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =65
 		types=[normal,hada]
-		moveset = [cuchillada,hipervoz,juegorudo,vientofeerico]
-		self.stats()
+		moveset = [cuchillada,vientofeerico,psicorrayo,chispa]
 	}
 }
-
-class Sandile inherits Pokemon{
-	override method statsBase () {
-		name ="Sandile"
-		hp  =10
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =65
-		types=[suelo,oscuro]
-		moveset = [terremoto,bofetonlodo,tajoumbrio,pulsoumbrio]
-		self.stats()
-	}
-}
-class Shedinja inherits Pokemon{
-	override method statsBase () {
-		name ="Shedinja"
-		hp  =10
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =65
-		types=[bicho,fantasma]
-		moveset = [megacuerno,rayosenial,puniosombra,bolasombra]
-		self.stats()
-	}
-}
-class Toxicroak inherits Pokemon{
-	override method statsBase () {
-		name ="Toxicroak"
-		hp  =10
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =65
-		types=[veneno,lucha]
-		moveset = [puyanociva,acido,brazomartillo,esferaaural]
-		self.stats()
-	}
-}
-class Bastiodon inherits Pokemon{
-	override method statsBase () {
-		name ="Bastiodon"
-		hp  =10
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =65
-		types=[roca,acero]
-		moveset = [tumbaroca,poderpasado,cabezahierro,metalaser]
-		self.stats()
-	}
-}
-class Gardevoir inherits Pokemon{
-	override method statsBase () {
-		name ="Gardevoir"
-		hp  =10
-		hpActual = hp // hpActual inicia en el valor máximo
-		atk =2
-		def =2
-		spa =2
-		spd =2
-		spe =65
-		types=[psiquico,hada]
-		moveset = [cabezazozen,psicorrayo,juegorudo,vientofeerico]
-		self.stats()
-	}
-}
+//------------------------------------------------------------------------------------------
 class Kyurem inherits Pokemon{
 	override method statsBase () {
 		name ="Kyurem"
@@ -392,11 +245,8 @@ class Kyurem inherits Pokemon{
 		hpActual = hp // hpActual inicia en el valor máximo
 		atk =2
 		def =2
-		spa =2
-		spd =2
 		spe =100
 		types=[dragon,hielo]
-		moveset = [garradragon,alientodragon,colmillohielo,rayohielo]
-		self.stats()
+		moveset = [alientodragon,rayohielo,bolasombra,lanzallamas]
 	}
 }
